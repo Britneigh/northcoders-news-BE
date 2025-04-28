@@ -94,6 +94,7 @@ describe.only("GET /api/articles", () => {
       .get("/api/articles")
       .expect(200)
       .then(({ body: { articles } }) => {
+        console.log(articles);
         expect(articles).toHaveLength(13);
         articles.forEach((article)=>{
           expect(article).toMatchObject({
@@ -109,4 +110,5 @@ describe.only("GET /api/articles", () => {
         });
       });
   });
+
 });
