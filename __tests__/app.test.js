@@ -73,14 +73,14 @@ describe.only("GET /api/articles/:article_id", () => {
           votes: 100,
           article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
         });
-          expect(article).toHaveProperty("author");
-          expect(article).toHaveProperty("title");
-          expect(article).toHaveProperty("article_id");
-          expect(article).toHaveProperty("body");
-          expect(article).toHaveProperty("topic");
-          expect(article).toHaveProperty("created_at");
-          expect(article).toHaveProperty("votes");
-          expect(article).toHaveProperty("article_img_url");
+          // expect(article).toHaveProperty("author");
+          // expect(article).toHaveProperty("title");
+          // expect(article).toHaveProperty("article_id");
+          // expect(article).toHaveProperty("body");
+          // expect(article).toHaveProperty("topic");
+          // expect(article).toHaveProperty("created_at");
+          // expect(article).toHaveProperty("votes");
+          // expect(article).toHaveProperty("article_img_url");
         });
       });
       test("404: Responds with \"No article found under article_id ${article_id}\" when attempting to GET an article ID that is out of range (does not exist in the database)", () =>{
