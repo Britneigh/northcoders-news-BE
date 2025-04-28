@@ -1,4 +1,4 @@
-const { selectTopics } =  require("../models/api.models");
+const { selectTopics, selectArticleById } =  require("../models/api.models");
 const endpoints = require("../endpoints.json");
 
 const getApi = (req, res) => {
@@ -12,4 +12,13 @@ const getTopics = (req, res) => {
         res.status(200).send({topics: topics});
     });
 }
-module.exports = { getApi, getTopics };
+
+const getArticleById = (req, res) => {
+    const { article_id } = req.params;
+    return selectArticleById(article_id)
+    .then((article) => {
+        console.log(article);
+        res.status(200).send({article: article})
+    })
+}
+module.exports = { getApi, getTopics, getArticleById };
