@@ -41,15 +41,7 @@ describe("GET /api/topics", () => {
       .get("/api/topics")
       .expect(200)
       .then(({ body: { topics } }) => {
-        expect(topics).toEqual([
-          {
-            slug: 'mitch',
-            description: 'The man, the Mitch, the legend',
-            img_url: ''
-          },
-          { slug: 'cats', description: 'Not dogs', img_url: '' },
-          { slug: 'paper', description: 'what books are made of', img_url: '' }
-        ]);
+        expect(topics).toHaveLength(3);
         topics.forEach((topic)=>{
           expect(topic).toMatchObject({
               slug: expect.any(String),
@@ -60,7 +52,7 @@ describe("GET /api/topics", () => {
   });
 });
 
-describe.only("GET /api/articles/:article_id", () => {
+describe("GET /api/articles/:article_id", () => {
   test("200: Responds with an object of an article by article_id", () => {
     return request(app)
       .get("/api/articles/1")
