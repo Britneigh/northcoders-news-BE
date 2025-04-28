@@ -23,3 +23,36 @@ describe("GET /api", () => {
       });
   });
 });
+
+describe("GET /api/topics", () => {
+  test("200: Responds with an array of all topics", () => {
+    return request(app)
+      .get("/api/topics")
+      .expect(200)
+      .then(({ body: { topics } }) => {
+        expect(topics).toEqual([
+          {
+            slug: 'mitch',
+            description: 'The man, the Mitch, the legend',
+            img_url: ''
+          },
+          { slug: 'cats', description: 'Not dogs', img_url: '' },
+          { slug: 'paper', description: 'what books are made of', img_url: '' }
+        ]);
+        topics.forEach((topic)=>{
+          expect(topic).toMatchObject({
+              slug: expect.any(String),
+              description: expect.any(String)
+          });
+        });
+      });
+  });
+  test("404: Responds with \"Not found\" when attempting to access a non-existent endpoint", () =>{
+    return request(app)
+    .get("/api/topiks")
+    .expect(404)
+    .then((response) =>{
+        expect(response.body.msg).toBe("Endpoint not found");
+    })
+  })
+});
