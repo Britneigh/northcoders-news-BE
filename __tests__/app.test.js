@@ -13,6 +13,17 @@ afterAll(() => {
     return db.end()
 })
 
+describe("404: For any attempt to access a non-existent endpoint", () => {
+  test("404: Responds with \"Not found\" when attempting to access a non-existent endpoint", () =>{
+    return request(app)
+    .get("/api/topiks")
+    .expect(404)
+    .then((response) =>{
+        expect(response.body.msg).toBe("Endpoint not found");
+    })
+  })
+})
+
 describe("GET /api", () => {
   test("200: Responds with an object detailing the documentation for each endpoint", () => {
     return request(app)
@@ -47,14 +58,6 @@ describe("GET /api/topics", () => {
         });
       });
   });
-  test("404: Responds with \"Not found\" when attempting to access a non-existent endpoint", () =>{
-    return request(app)
-    .get("/api/topiks")
-    .expect(404)
-    .then((response) =>{
-        expect(response.body.msg).toBe("Endpoint not found");
-    })
-  })
 });
 
 describe.only("GET /api/articles/:article_id", () => {
