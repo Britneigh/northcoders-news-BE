@@ -68,30 +68,45 @@ describe("GET /api/articles/:article_id", () => {
           votes: 100,
           article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
         });
-          // expect(article).toHaveProperty("author");
-          // expect(article).toHaveProperty("title");
-          // expect(article).toHaveProperty("article_id");
-          // expect(article).toHaveProperty("body");
-          // expect(article).toHaveProperty("topic");
-          // expect(article).toHaveProperty("created_at");
-          // expect(article).toHaveProperty("votes");
-          // expect(article).toHaveProperty("article_img_url");
+      })
+  });
+  test("404: Responds with \"No article found under article_id ${article_id}\" when attempting to GET an article ID that is out of range (does not exist in the database)", () =>{
+    return request(app)
+      .get("/api/articles/99999")
+      .expect(404)
+      .then((response) =>{
+        expect(response.body.msg).toBe("No article found under article_id 99999");
+      })
+  });
+  test("400: Responds with \"Bad request\" when attempting to GET an invalid article ID", () =>{
+    return request(app)
+      .get("/api/articles/notAnId")
+      .expect(400)
+      .then((response) =>{
+        expect(response.body.msg).toBe("Bad request");
+      })
+  });
+});
+
+describe.only("GET /api/articles", () => {
+  test("200: Responds with an array of all articles as objects", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toHaveLength(13);
+        articles.forEach((article)=>{
+          expect(article).toMatchObject({
+            author: expect.any(String),
+            title: expect.any(String),
+            article_id: expect.any(Number),
+            topic: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(Number)
+          });
         });
       });
-      test("404: Responds with \"No article found under article_id ${article_id}\" when attempting to GET an article ID that is out of range (does not exist in the database)", () =>{
-        return request(app)
-        .get("/api/articles/99999")
-        .expect(404)
-        .then((response) =>{
-            expect(response.body.msg).toBe("No article found under article_id 99999");
-        })
-      });
-      test("400: Responds with \"Bad request\" when attempting to GET an invalid article ID", () =>{
-        return request(app)
-        .get("/api/articles/notAnId")
-        .expect(400)
-        .then((response) =>{
-            expect(response.body.msg).toBe("Bad request");
-        })
-      })
+  });
 });
