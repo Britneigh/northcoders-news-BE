@@ -83,4 +83,20 @@ describe.only("GET /api/articles/:article_id", () => {
           expect(article).toHaveProperty("article_img_url");
         });
       });
+      test("404: Responds with \"No article found under article_id ${article_id}\" when attempting to GET an article ID that is out of range (does not exist in the database)", () =>{
+        return request(app)
+        .get("/api/articles/99999")
+        .expect(404)
+        .then((response) =>{
+            expect(response.body.msg).toBe("No article found under article_id 99999");
+        })
+      });
+      test("400: Responds with \"Bad request\" when attempting to GET an invalid article ID", () =>{
+        return request(app)
+        .get("/api/articles/notAnId")
+        .expect(400)
+        .then((response) =>{
+            expect(response.body.msg).toBe("Bad request");
+        })
+      })
 });
