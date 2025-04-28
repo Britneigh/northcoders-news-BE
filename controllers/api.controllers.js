@@ -8,7 +8,6 @@ const getApi = (req, res) => {
 const getTopics = (req, res) => {
     return selectTopics()
     .then((topics) => {
-        console.log(topics);
         res.status(200).send({topics: topics});
     });
 }
