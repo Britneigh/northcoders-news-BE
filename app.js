@@ -22,7 +22,7 @@ app.all("/*splat", (req, res) => {
 
 app.use((err, req, res, next) => {
     console.log(err, "<<<");
-    if(err.code === "22P02"){
+    if(err.code === "22P02" || err.code === "23503"){
         res.status(400).send({msg: "Bad request"})
     }else if(err.status && err.msg){
         res.status(err.status).send({msg: err.msg})

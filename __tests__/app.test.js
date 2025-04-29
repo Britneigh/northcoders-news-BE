@@ -152,7 +152,7 @@ describe("GET /api/articles/:article_id/comments", () => {
   });
 });
 
-describe.only("POST /api/articles/:article_id/comments", () => {
+describe("POST /api/articles/:article_id/comments", () => {
   test("201: Responds with the newly added comment by article_id", () => {
     const newComment = {
       username: "icellusedkars",
@@ -173,5 +173,30 @@ describe.only("POST /api/articles/:article_id/comments", () => {
         created_at: expect.any(String)
       })
     })
-  })
+  });
+  test("400: Responds with \"Bad request\" when the request body does not contain the all of the neccessary fields", () =>{
+    const newComment = {
+      body: "Apple pie with custard"
+    }
+    return request(app)
+    .post("/api/articles/1/comments")
+    .send(newComment)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Missing fields");
+      })
+  });
+  test("400: Responds with \"Bad request\" when the request body has valid fields but invalid field values", () =>{
+    const newComment = {
+      username: 3, 
+      body: 20000
+    }
+    return request(app)
+    .post("/api/articles/1/comments")
+    .send(newComment)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      })
+  });
 });

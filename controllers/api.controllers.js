@@ -41,7 +41,7 @@ const getCommentsByArticleId = (req, res, next) => {
     })
 }
 
-const postComment = (req, res) => {
+const postComment = (req, res, next) => {
     const { article_id } = req.params;
     const { username, body } = req.body;
     selectArticleById(article_id)
@@ -50,6 +50,9 @@ const postComment = (req, res) => {
     })
     .then((comment) => {
         res.status(201).send({comment: comment});
+    })
+    .catch((err) => {
+        next(err)
     })
 }
 

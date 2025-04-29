@@ -51,6 +51,10 @@ const selectCommentsByArticleId = (article_id) => {
 }
 
 const insertIntoComments = (article_id, username, body) => {
+    if(!article_id || !username || !body){
+        return Promise.reject({status: 400, msg: 'Missing fields'});
+    }
+
     return db
     .query(
     `INSERT INTO comments (article_id, author, body)
