@@ -174,7 +174,7 @@ describe("POST /api/articles/:article_id/comments", () => {
       })
     })
   });
-  test("400: Responds with \"Bad request\" when the request body does not contain the all of the neccessary fields", () =>{
+  test("400: Responds with \"Missing fields\" when the request body does not contain the all of the neccessary fields", () =>{
     const newComment = {
       body: "Apple pie with custard"
     }
@@ -199,4 +199,33 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(response.body.msg).toBe("Bad request");
       })
   });
+});
+
+describe("PATCH /api/articles/:article_id", () => {
+  test("Responds with 200 and the updated article's vote incremented properly", () => {
+   const updatedArticle = {
+    inc_votes: 10
+    }
+
+    return request(app)
+    .patch("/api/articles/1")
+    .send(updatedArticle)
+    .expect(200)
+    .then(({ body: { updatedArticle } }) => {
+      expect(updatedArticle.votes).toEqual(110);
+    })
+  });
+  test("Responds with 200 and the updated article's vote decremented properly", () => {
+    const updatedArticle = {
+     inc_votes: -10
+     }
+ 
+     return request(app)
+     .patch("/api/articles/1")
+     .send(updatedArticle)
+     .expect(200)
+     .then(({ body: { updatedArticle } }) => {
+       expect(updatedArticle.votes).toEqual(90);
+     })
+   });
 });

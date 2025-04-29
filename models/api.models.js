@@ -57,11 +57,21 @@ const insertIntoComments = (article_id, username, body) => {
 
     return db
     .query(
-    `INSERT INTO comments (article_id, author, body)
-     VALUES ($1, $2, $3) RETURNING *`, [article_id, username, body])
+        `INSERT INTO comments (article_id, author, body)
+         VALUES ($1, $2, $3) RETURNING *;`, [article_id, username, body])
     .then((result) => {
         return result.rows[0];
     })
 }
 
-module.exports = { selectTopics, selectArticleById, selectArticles, selectCommentsByArticleId, insertIntoComments };
+const updateArticle = (article_id, inc_votes) => {
+    return db
+    .query(
+        `UPDATE articles SET votes = votes + $2 WHERE article_id = $1
+         RETURNING *;`, [article_id, inc_votes])
+    .then((result) => {
+        return result.rows[0];
+    })
+}
+
+module.exports = { selectTopics, selectArticleById, selectArticles, selectCommentsByArticleId, insertIntoComments, updateArticle };
