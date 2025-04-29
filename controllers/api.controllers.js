@@ -56,7 +56,7 @@ const postComment = (req, res, next) => {
     })
 }
 
-const patchArticle = (req, res) => {
+const patchArticle = (req, res, next) => {
     const { article_id } = req.params;
     const { inc_votes } = req.body;
     selectArticleById(article_id)
@@ -65,6 +65,9 @@ const patchArticle = (req, res) => {
     })
     .then((updatedArticle) => {
         res.status(200).send({updatedArticle: updatedArticle});
+    })
+    .catch((err) => {
+        next(err)
     })
 }
 
