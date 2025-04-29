@@ -1,4 +1,4 @@
-const { selectTopics, selectArticleById, selectArticles, selectCommentsByArticleId } =  require("../models/api.models");
+const { selectTopics, selectArticleById, selectArticles, selectCommentsByArticleId, insertIntoComments } =  require("../models/api.models");
 const endpoints = require("../endpoints.json");
 
 const getApi = (req, res) => {
@@ -41,4 +41,16 @@ const getCommentsByArticleId = (req, res, next) => {
     })
 }
 
-module.exports = { getApi, getTopics, getArticleById, getArticles, getCommentsByArticleId };
+const postComment = (req, res) => {
+    const { article_id } = req.params;
+    const { username, body } = req.body;
+    selectArticleById(article_id)
+    .then(() => {
+      return insertIntoComments(article_id, username, body)
+    })
+    .then((comment) => {
+        res.status(201).send({comment: comment});
+    })
+}
+
+module.exports = { getApi, getTopics, getArticleById, getArticles, getCommentsByArticleId, postComment };

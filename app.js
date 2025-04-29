@@ -1,7 +1,8 @@
 const express = require("express");
 const app = express();
-const { getApi, getTopics, getArticleById, getArticles, getCommentsByArticleId} = require("./controllers/api.controllers");
+const { getApi, getTopics, getArticleById, getArticles, getCommentsByArticleId, postComment} = require("./controllers/api.controllers");
 
+app.use(express.json());
 
 app.get("/api", getApi);
 
@@ -12,6 +13,8 @@ app.get("/api/articles/:article_id", getArticleById);
 app.get("/api/articles", getArticles);
 
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
+
+app.post("/api/articles/:article_id/comments", postComment);
 
 app.all("/*splat", (req, res) => {
     res.status(404).send({msg: "Endpoint not found"});

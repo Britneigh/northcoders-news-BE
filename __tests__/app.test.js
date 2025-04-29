@@ -151,3 +151,27 @@ describe("GET /api/articles/:article_id/comments", () => {
       })
   });
 });
+
+describe("POST /api/articles/:article_id/comments", () => {
+  test("201: Responds with the newly added comment to an article_id", () => {
+    const newComment = {
+      username: "icellusedkars",
+      body: "Apple pie with custard"
+    }
+
+    return request(app)
+    .post("/api/articles/1/comments")
+    .send(newComment)
+    .expect(201)
+    .then(({ body: { comment } }) => {
+      expect(comment).toEqual({
+        comment_id: expect.any(Number),
+        article_id: 1,
+        author: "icellusedkars",
+        body: "Apple pie with custard",
+        votes: expect.any(Number),
+        created_at: expect.any(String)
+      })
+    })
+  })
+});
