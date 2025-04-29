@@ -1,4 +1,4 @@
-const { selectTopics, selectArticleById, selectArticles, selectCommentsByArticleId, insertIntoComments, updateArticle } =  require("../models/api.models");
+const { selectTopics, selectArticleById, selectArticles, selectCommentsByArticleId, insertIntoComments, updateArticle, removeComment } =  require("../models/api.models");
 const endpoints = require("../endpoints.json");
 
 const getApi = (req, res) => {
@@ -71,4 +71,12 @@ const patchArticle = (req, res, next) => {
     })
 }
 
-module.exports = { getApi, getTopics, getArticleById, getArticles, getCommentsByArticleId, postComment, patchArticle };
+const deleteComment = (req, res) => {
+    const { comment_id } = req.params;
+    return removeComment(comment_id)
+    .then((deletedComment) => {
+        res.status(204).send({deletedComment: deletedComment});
+    })
+}
+
+module.exports = { getApi, getTopics, getArticleById, getArticles, getCommentsByArticleId, postComment, patchArticle, deleteComment };

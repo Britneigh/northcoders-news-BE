@@ -82,4 +82,13 @@ const updateArticle = (article_id, inc_votes) => {
     })
 }
 
-module.exports = { selectTopics, selectArticleById, selectArticles, selectCommentsByArticleId, insertIntoComments, updateArticle };
+const removeComment = (comment_id) => {
+    return db
+    .query(
+        `DELETE FROM comments WHERE comment_id = $1 RETURNING *`, [comment_id])
+    .then((result) => {
+        return result.rows[0];
+    })
+}
+
+module.exports = { selectTopics, selectArticleById, selectArticles, selectCommentsByArticleId, insertIntoComments, updateArticle, removeComment };
