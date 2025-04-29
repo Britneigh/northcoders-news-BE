@@ -134,4 +134,20 @@ describe("GET /api/articles/:article_id/comments", () => {
       });
     });
   });
+  test("404: Responds with \"No comments found under article_id ${article_id}\" when attempting to GET an article ID that is out of range", () =>{
+    return request(app)
+      .get("/api/articles/99999/comments")
+      .expect(404)
+      .then((response) =>{
+        expect(response.body.msg).toBe("No comments found under article_id 99999");
+      })
+  });
+  test("400: Responds with \"Bad request\" when attempting to GET an invalid article ID", () =>{
+    return request(app)
+      .get("/api/articles/notAnId/comments")
+      .expect(400)
+      .then((response) =>{
+        expect(response.body.msg).toBe("Bad request");
+      })
+  });
 });
