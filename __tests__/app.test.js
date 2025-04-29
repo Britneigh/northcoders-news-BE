@@ -152,8 +152,8 @@ describe("GET /api/articles/:article_id/comments", () => {
   });
 });
 
-describe("POST /api/articles/:article_id/comments", () => {
-  test("201: Responds with the newly added comment to an article_id", () => {
+describe.only("POST /api/articles/:article_id/comments", () => {
+  test("201: Responds with the newly added comment by article_id", () => {
     const newComment = {
       username: "icellusedkars",
       body: "Apple pie with custard"
