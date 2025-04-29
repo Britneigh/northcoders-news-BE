@@ -96,7 +96,6 @@ describe("GET /api/articles", () => {
       .get("/api/articles")
       .expect(200)
       .then(({ body: { articles } }) => {
-        console.log(articles);
         expect(articles).toHaveLength(13);
         articles.forEach((article)=>{
           expect(article).toMatchObject({
@@ -109,7 +108,30 @@ describe("GET /api/articles", () => {
             article_img_url: expect.any(String),
             comment_count: expect.any(Number)
           });
+          expect(articles).toBeSortedBy("created_at", {descending: true});
         });
       });
+  });
+});
+
+describe("GET /api/articles/:article_id/comments", () => {
+  test("200: Responds with an array of comments by article_id", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        expect(comments).toHaveLength(11);
+        comments.forEach((comment)=>{
+          expect(comment).toMatchObject({
+            comment_id: expect.any(Number),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            article_id: expect.any(Number)
+          });
+          expect(comments).toBeSortedBy("created_at", {descending: false});
+      });
+    });
   });
 });

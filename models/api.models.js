@@ -20,7 +20,7 @@ const selectArticleById = (article_id) => {
 }
 
 const selectArticles = () => {
-    return db.query(`SELECT
+return db.query(`SELECT
   articles.author,
   articles.title,
   articles.article_id,
@@ -38,4 +38,12 @@ ORDER BY articles.created_at DESC;`)
     });    
 }
 
-module.exports = { selectTopics, selectArticleById, selectArticles };
+const selectCommentsByArticleId = (article_id) => {
+    return db
+    .query(`SELECT * FROM comments WHERE article_id = $1 ORDER BY comments.created_at ASC;`, [article_id])
+    .then((result) => {
+        return result.rows;
+    })
+}
+
+module.exports = { selectTopics, selectArticleById, selectArticles, selectCommentsByArticleId };
