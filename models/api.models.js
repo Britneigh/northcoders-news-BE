@@ -43,11 +43,25 @@ const selectCommentsByArticleId = (article_id) => {
     .query(`SELECT * FROM comments WHERE article_id = $1 ORDER BY comments.created_at ASC;`, [article_id])
     .then((result) => {
         if(result.rows.length === 0){
-            return Promise.reject({status: 404, msg: `No comments found under article_id ${article_id}`});
+            return Promise.reject({status: 404, msg: `Not found`});
         } else {
             return result.rows;
         }
     })
 }
 
-module.exports = { selectTopics, selectArticleById, selectArticles, selectCommentsByArticleId };
+const insertIntoComments = (article_id, username, body) => {
+    if(!article_id || !username || !body){
+        return Promise.reject({status: 400, msg: 'Missing fields'});
+    }
+
+    return db
+    .query(
+    `INSERT INTO comments (article_id, author, body)
+     VALUES ($1, $2, $3) RETURNING *`, [article_id, username, body])
+    .then((result) => {
+        return result.rows[0];
+    })
+}
+
+module.exports = { selectTopics, selectArticleById, selectArticles, selectCommentsByArticleId, insertIntoComments };
