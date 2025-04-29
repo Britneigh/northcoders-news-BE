@@ -139,7 +139,7 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/99999/comments")
       .expect(404)
       .then((response) =>{
-        expect(response.body.msg).toBe("No comments found under article_id 99999");
+        expect(response.body.msg).toBe("Not found");
       })
   });
   test("400: Responds with \"Bad request\" when attempting to GET an invalid article ID", () =>{
