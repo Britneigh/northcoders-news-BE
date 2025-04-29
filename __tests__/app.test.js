@@ -77,7 +77,7 @@ describe("GET /api/articles/:article_id", () => {
       .get("/api/articles/99999")
       .expect(404)
       .then((response) =>{
-        expect(response.body.msg).toBe("No article found under article_id 99999");
+        expect(response.body.msg).toBe("Not found");
       })
   });
   test("400: Responds with \"Bad request\" when attempting to GET an invalid article ID", () =>{
@@ -174,7 +174,7 @@ describe("POST /api/articles/:article_id/comments", () => {
       })
     })
   });
-  test("400: Responds with \"Bad request\" when the request body does not contain the all of the neccessary fields", () =>{
+  test("400: Responds with \"Missing fields\" when the request body does not contain the all of the neccessary fields", () =>{
     const newComment = {
       body: "Apple pie with custard"
     }
@@ -183,7 +183,7 @@ describe("POST /api/articles/:article_id/comments", () => {
     .send(newComment)
       .expect(400)
       .then((response) => {
-        expect(response.body.msg).toBe("Missing fields");
+        expect(response.body.msg).toBe("Bad request");
       })
   });
   test("400: Responds with \"Bad request\" when the request body has valid fields but invalid field values", () =>{
@@ -198,5 +198,65 @@ describe("POST /api/articles/:article_id/comments", () => {
       .then((response) => {
         expect(response.body.msg).toBe("Bad request");
       })
+  });
+});
+
+describe("PATCH /api/articles/:article_id", () => {
+  test("200: Responds with the updated article's vote incremented properly", () => {
+   const updatedArticle = {
+    inc_votes: 10
+    }
+    return request(app)
+    .patch("/api/articles/1")
+    .send(updatedArticle)
+    .expect(200)
+    .then(({ body: { updatedArticle } }) => {
+      expect(updatedArticle.votes).toEqual(110);
+    })
+  });
+  test("200: Responds with the updated article's vote decremented properly", () => {
+    const updatedArticle = {
+     inc_votes: -10
+     }
+     return request(app)
+     .patch("/api/articles/1")
+     .send(updatedArticle)
+     .expect(200)
+     .then(({ body: { updatedArticle } }) => {
+       expect(updatedArticle.votes).toEqual(90);
+     })
+   });
+   test("Responds with 400 \"Bad request \" when attempting to PATCH an article that does not contain the necessary field", () => {
+    const updatedArticle = {}
+
+    return request(app)
+    .patch("/api/articles/1")
+    .send(updatedArticle)
+    .expect(400)
+    .then((response) => {
+      expect(response.body.msg).toEqual("Bad request");
+    })
+  })
+  test("Responds with 400 \"Bad request \" when attempting to update with an invalid field value", () => {
+    const updatedArticle = {inc_votes: 'word'}
+
+    return request(app)
+    .patch("/api/articles/1")
+    .send(updatedArticle)
+    .expect(400)
+    .then((response) => {
+      expect(response.body.msg).toEqual("Bad request");
+    })
+  });
+  test("Responds with 404 if the article_id is out of range", () => {
+    const updatedArticle = {inc_votes: 15}
+
+    return request(app)
+    .patch("/api/articles/99999")
+    .send(updatedArticle)
+    .expect(404)
+    .then((response) => {
+      expect(response.body.msg).toEqual("Not found");
+    })
   });
 });

@@ -12,7 +12,7 @@ const selectArticleById = (article_id) => {
     .query(`SELECT * FROM articles WHERE article_id = $1;`, [article_id])
     .then((result) => {
         if(result.rows.length === 0){
-            return Promise.reject({status: 404, msg: `No article found under article_id ${article_id}`});
+            return Promise.reject({status: 404, msg: "Not found"});
         } else {
             return result.rows[0];
         }    
@@ -43,7 +43,7 @@ const selectCommentsByArticleId = (article_id) => {
     .query(`SELECT * FROM comments WHERE article_id = $1 ORDER BY comments.created_at ASC;`, [article_id])
     .then((result) => {
         if(result.rows.length === 0){
-            return Promise.reject({status: 404, msg: `Not found`});
+            return Promise.reject({status: 404, msg: "Not found"});
         } else {
             return result.rows;
         }
@@ -52,16 +52,34 @@ const selectCommentsByArticleId = (article_id) => {
 
 const insertIntoComments = (article_id, username, body) => {
     if(!article_id || !username || !body){
-        return Promise.reject({status: 400, msg: 'Missing fields'});
+        return Promise.reject({status: 400, msg: "Bad request"});
     }
 
     return db
     .query(
-    `INSERT INTO comments (article_id, author, body)
-     VALUES ($1, $2, $3) RETURNING *`, [article_id, username, body])
+        `INSERT INTO comments (article_id, author, body)
+         VALUES ($1, $2, $3) RETURNING *;`, [article_id, username, body])
     .then((result) => {
         return result.rows[0];
     })
 }
 
-module.exports = { selectTopics, selectArticleById, selectArticles, selectCommentsByArticleId, insertIntoComments };
+const updateArticle = (article_id, inc_votes) => {
+    if(!article_id || !inc_votes){
+        return Promise.reject({status: 400, msg: "Bad request"});
+    }
+
+    return db
+    .query(
+        `UPDATE articles SET votes = votes + $2 WHERE article_id = $1
+         RETURNING *;`, [article_id, inc_votes])
+    .then((result) => {
+        if(result.rows.length === 0){
+            return Promise.reject({status: 404, msg: "Not found"});
+        } else {
+        return result.rows[0];
+        }
+    })
+}
+
+module.exports = { selectTopics, selectArticleById, selectArticles, selectCommentsByArticleId, insertIntoComments, updateArticle };
