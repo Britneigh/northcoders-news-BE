@@ -372,4 +372,12 @@ describe("GET /api/articles?sort_by", () => {
       });
     });
   });
+  test("404: Responds with \"Not found\" when given an invalid sort_by query", ()=>{
+    return request(app)
+    .get("/api/articles?sort_by=notAColumn")
+    .expect(404)
+    .then((response) =>{
+      expect(response.body.msg).toEqual("Not found");
+    })
+  });
 });

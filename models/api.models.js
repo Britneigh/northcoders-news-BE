@@ -23,6 +23,10 @@ const selectArticles = (sort_by = "created_at", order = "desc") => {
     const validSortBy = ["created_at","author", "title", "article_id", "topic", "votes", "article_img_url"];
     const validOrders = ["asc", "desc"];
 
+    if (!validSortBy.includes(sort_by) || !validOrders.includes(order)){
+        return Promise.reject({ status: 404, msg: "Not found" });
+    }
+
 return db.query(`SELECT
   articles.author,
   articles.title,
