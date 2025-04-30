@@ -211,7 +211,8 @@ describe("PATCH /api/articles/:article_id", () => {
     .send(updatedArticle)
     .expect(200)
     .then(({ body: { updatedArticle } }) => {
-      expect(updatedArticle.votes).toEqual(110);
+      expect(updatedArticle.votes).toBe(110);
+      expect(updatedArticle.article_id).toBe(1);
     })
   });
   test("200: Responds with the updated article's vote decremented properly", () => {
@@ -223,10 +224,11 @@ describe("PATCH /api/articles/:article_id", () => {
      .send(updatedArticle)
      .expect(200)
      .then(({ body: { updatedArticle } }) => {
-       expect(updatedArticle.votes).toEqual(90);
+       expect(updatedArticle.votes).toBe(90);
+       expect(updatedArticle.article_id).toBe(1);
      })
    });
-   test("Responds with 400 \"Bad request \" when attempting to PATCH an article that does not contain the necessary field", () => {
+   test("Responds with 400 \"Bad request\" when attempting to PATCH an article that does not contain the necessary field", () => {
     const updatedArticle = {}
 
     return request(app)
@@ -237,7 +239,7 @@ describe("PATCH /api/articles/:article_id", () => {
       expect(response.body.msg).toEqual("Bad request");
     })
   })
-  test("Responds with 400 \"Bad request \" when attempting to update with an invalid field value", () => {
+  test("Responds with 400 \"Bad request\" when attempting to update with an invalid field value", () => {
     const updatedArticle = {inc_votes: 'word'}
 
     return request(app)
