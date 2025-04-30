@@ -2,6 +2,8 @@ const db = require('../db/connection');
 const seed = require('../db/seeds/seed');
 const data = require('../db/data/test-data/index');
 
+jest.setTimeout(5000);
+
 beforeAll(() => seed(data));
 afterAll(() => db.end());
 

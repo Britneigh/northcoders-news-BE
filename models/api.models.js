@@ -51,7 +51,7 @@ const selectCommentsByArticleId = (article_id) => {
 }
 
 const insertIntoComments = (article_id, username, body) => {
-    if(!article_id || !username || !body){
+    if(!article_id || typeof username !== "string" || !body){
         return Promise.reject({status: 400, msg: "Bad request"});
     }
 
@@ -82,4 +82,17 @@ const updateArticle = (article_id, inc_votes) => {
     })
 }
 
-module.exports = { selectTopics, selectArticleById, selectArticles, selectCommentsByArticleId, insertIntoComments, updateArticle };
+const removeComment = (comment_id) => {
+    return db
+    .query(
+        `DELETE FROM comments WHERE comment_id = $1 RETURNING *`, [comment_id])
+    .then((result) => {
+        if(result.rows.length === 0){
+            return Promise.reject({status: 404, msg: "Not found"});
+        } else {
+        return result.rows[0];
+        }
+    })
+}
+
+module.exports = { selectTopics, selectArticleById, selectArticles, selectCommentsByArticleId, insertIntoComments, updateArticle, removeComment };

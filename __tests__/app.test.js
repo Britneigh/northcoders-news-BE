@@ -174,7 +174,7 @@ describe("POST /api/articles/:article_id/comments", () => {
       })
     })
   });
-  test("400: Responds with \"Missing fields\" when the request body does not contain the all of the neccessary fields", () =>{
+  test("400: Responds with \"Bad request\" when the request body does not contain the all of the neccessary fields", () =>{
     const newComment = {
       body: "Apple pie with custard"
     }
@@ -199,6 +199,32 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(response.body.msg).toBe("Bad request");
       })
   });
+  test("404: Responds with \"Not found\" when the username does not exist", () =>{
+    const newComment = {
+      username: "fakeUsername",
+      body: "Apple pie with custard"
+    }
+    return request(app)
+    .post("/api/articles/1/comments")
+    .send(newComment)
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("Not found");
+      })
+  });
+  test("404: Responds with \"Not found\" when POSTing to a non-existent ID", () =>{
+    const newComment = {
+      username: "icellusedkars",
+      body: "Apple pie with custard"
+    }
+    return request(app)
+    .post("/api/articles/99999/comments")
+    .send(newComment)
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("Not found");
+      })
+  });
 });
 
 describe("PATCH /api/articles/:article_id", () => {
@@ -211,7 +237,16 @@ describe("PATCH /api/articles/:article_id", () => {
     .send(updatedArticle)
     .expect(200)
     .then(({ body: { updatedArticle } }) => {
-      expect(updatedArticle.votes).toEqual(110);
+      expect(updatedArticle).toMatchObject({
+        article_id: 1,
+        title: expect.any(String),
+        topic: expect.any(String),
+        author: expect.any(String),
+        body: expect.any(String),
+        created_at: expect.any(String),
+        votes: 110,
+        article_img_url: expect.any(String)
+      });
     })
   });
   test("200: Responds with the updated article's vote decremented properly", () => {
@@ -223,10 +258,19 @@ describe("PATCH /api/articles/:article_id", () => {
      .send(updatedArticle)
      .expect(200)
      .then(({ body: { updatedArticle } }) => {
-       expect(updatedArticle.votes).toEqual(90);
+        expect(updatedArticle).toMatchObject({
+          article_id: 1,
+          title: expect.any(String),
+          topic: expect.any(String),
+          author: expect.any(String),
+          body: expect.any(String),
+          created_at: expect.any(String),
+          votes: 90,
+          article_img_url: expect.any(String)
+      });
      })
    });
-   test("Responds with 400 \"Bad request \" when attempting to PATCH an article that does not contain the necessary field", () => {
+   test("Responds with 400 \"Bad request\" when attempting to PATCH an article that does not contain the necessary field", () => {
     const updatedArticle = {}
 
     return request(app)
@@ -237,7 +281,7 @@ describe("PATCH /api/articles/:article_id", () => {
       expect(response.body.msg).toEqual("Bad request");
     })
   })
-  test("Responds with 400 \"Bad request \" when attempting to update with an invalid field value", () => {
+  test("Responds with 400 \"Bad request\" when attempting to update with an invalid field value", () => {
     const updatedArticle = {inc_votes: 'word'}
 
     return request(app)
@@ -257,6 +301,33 @@ describe("PATCH /api/articles/:article_id", () => {
     .expect(404)
     .then((response) => {
       expect(response.body.msg).toEqual("Not found");
+    })
+  });
+});
+
+describe("DELETE /api/comments/:comment_id", () => {
+  test("Responds with 204 and no content", () => {
+    return request(app)
+    .delete("/api/comments/2")
+    .expect(204)
+    .then((response) => {
+      expect(response.body).toEqual({});
+    });
+  });
+  test("404: Responds with \"Not found\" when attempting to DELETE a non-existent comment", () => {
+    return request(app)
+    .delete("/api/comments/99999")
+    .expect(404)
+    .then((response) => {
+      expect(response.body.msg).toBe("Not found");
+    })
+  });
+  test("400: Responds with \"Bad request\" when attempting to DELETE a comment referenced by an invalid comment_id", () => {
+    return request(app)
+    .delete("/api/comments/notAnId")
+    .expect(400)
+    .then((response) => {
+      expect(response.body.msg).toBe("Bad request");
     })
   });
 });
