@@ -51,7 +51,7 @@ const selectCommentsByArticleId = (article_id) => {
 }
 
 const insertIntoComments = (article_id, username, body) => {
-    if(!article_id || !username || !body){
+    if(!article_id || typeof username !== "string" || !body){
         return Promise.reject({status: 400, msg: "Bad request"});
     }
 

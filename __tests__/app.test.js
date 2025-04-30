@@ -174,7 +174,7 @@ describe("POST /api/articles/:article_id/comments", () => {
       })
     })
   });
-  test("400: Responds with \"Missing fields\" when the request body does not contain the all of the neccessary fields", () =>{
+  test("400: Responds with \"Bad request\" when the request body does not contain the all of the neccessary fields", () =>{
     const newComment = {
       body: "Apple pie with custard"
     }
@@ -197,6 +197,32 @@ describe("POST /api/articles/:article_id/comments", () => {
       .expect(400)
       .then((response) => {
         expect(response.body.msg).toBe("Bad request");
+      })
+  });
+  test("404: Responds with \"Not found\" when the username does not exist", () =>{
+    const newComment = {
+      username: "fakeUsername",
+      body: "Apple pie with custard"
+    }
+    return request(app)
+    .post("/api/articles/1/comments")
+    .send(newComment)
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("Not found");
+      })
+  });
+  test("404: Responds with \"Not found\" when POSTing to a non-existent ID", () =>{
+    const newComment = {
+      username: "icellusedkars",
+      body: "Apple pie with custard"
+    }
+    return request(app)
+    .post("/api/articles/99999/comments")
+    .send(newComment)
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("Not found");
       })
   });
 });
