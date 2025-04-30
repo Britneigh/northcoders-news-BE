@@ -5,7 +5,7 @@ const data = require("../db/data/test-data/index.js");
 const app = require("../app.js");
 const request = require("supertest");
 
-jest.setTimeout(10000);
+jest.setTimeout(12000);
 
 beforeEach(() => {
     return seed(data)
@@ -488,6 +488,57 @@ describe("GET /api/articles?order=", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("Not found");
+      });
+  });
+});
+
+describe("GET /api/articles?topic=", () => {
+  test("200: Responds with articles filtered by a valid topic query", () => {
+      return request(app)
+      .get("/api/articles?topic=cats")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toHaveLength(1);
+        articles.forEach((article)=>{
+          expect(article).toMatchObject({
+            author: expect.any(String),
+            title: expect.any(String),
+            article_id: expect.any(Number),
+            topic: "cats",
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(Number),
+          });
+      });
+    });
+  });
+  test("200: Still responds with all articles when topic query is omitted", () => {
+    return request(app)
+    .get("/api/articles")
+    .expect(200)
+    .then(({ body: { articles } }) => {
+      expect(articles).toHaveLength(13);
+      articles.forEach((article)=>{
+        expect(article).toMatchObject({
+          author: expect.any(String),
+          title: expect.any(String),
+          article_id: expect.any(Number),
+          topic: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          article_img_url: expect.any(String),
+          comment_count: expect.any(Number),
+        });
+    });
+  });
+  });
+  test("200: Responds with an empty array when a topic query is valid but has no articles", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toEqual([]);
       });
   });
 });

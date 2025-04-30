@@ -19,12 +19,33 @@ const selectArticleById = (article_id) => {
     })
 }
 
-const selectArticles = (sort_by = "created_at", order = "desc") => {
+const selectArticles = (sort_by = "created_at", order = "desc", topic) => {
     const validSortBy = ["created_at","author", "title", "article_id", "topic", "votes", "article_img_url"];
     const validOrders = ["asc", "desc"];
 
     if (!validSortBy.includes(sort_by) || !validOrders.includes(order)){
         return Promise.reject({ status: 404, msg: "Not found" });
+    }
+
+    if(topic){
+        return db
+        .query(`SELECT
+        articles.author,
+        articles.title,
+        articles.article_id,
+        articles.topic,
+        articles.created_at,
+        articles.votes,
+        articles.article_img_url,
+        COUNT(comments.comment_id)::INT AS comment_count
+        FROM articles
+        LEFT JOIN comments ON comments.article_id = articles.article_id
+        WHERE topic = $1 
+        GROUP BY articles.article_id
+        ORDER BY ${sort_by} ${order};`, [topic])
+        .then((result) => {
+            return result.rows;
+        })
     }
 
 return db.query(`SELECT
