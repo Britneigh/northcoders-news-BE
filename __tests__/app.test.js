@@ -350,7 +350,7 @@ describe("GET /api/users", () => {
   });
 });
 
-describe("GET /api/articles?sort_by", () => {
+describe("GET /api/articles?sort_by=", () => {
   test("200: Responds with an array of articles sorted by title", () => {
       return request(app)
       .get("/api/articles?sort_by=title")
@@ -414,6 +414,14 @@ describe("GET /api/articles?sort_by", () => {
     });
   });
 });
+  test("200: Still responds with articles sorted correctly when passed a valid order query", () => {
+    return request(app)
+    .get("/api/articles?sort_by=title&order=asc")
+    .expect(200)
+    .then(({ body: { articles } }) => {
+      expect(articles).toBeSortedBy("title", { descending: false });
+    });
+  });
   test("404: Responds with \"Not found\" when given an invalid sort_by query", ()=>{
     return request(app)
     .get("/api/articles?sort_by=invalidQuery")
@@ -421,5 +429,65 @@ describe("GET /api/articles?sort_by", () => {
     .then((response) =>{
       expect(response.body.msg).toEqual("Not found");
     })
+  });
+});
+describe("GET /api/articles?order=", () => {
+  test("200: Responds with an array of articles in ascending order", () => {
+      return request(app)
+      .get("/api/articles?order=asc")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toHaveLength(13);
+        expect(articles).toBeSortedBy("created_at", {descending: false});
+        articles.forEach((article)=>{
+          expect(article).toMatchObject({
+            author: expect.any(String),
+            title: expect.any(String),
+            article_id: expect.any(Number),
+            topic: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(Number),
+          });
+      });
+    });
+  });
+  test("200: Responds with an array of articles in descending order", () => {
+    return request(app)
+    .get("/api/articles?order=desc")
+    .expect(200)
+    .then(({ body: { articles } }) => {
+      expect(articles).toHaveLength(13);
+      expect(articles).toBeSortedBy("created_at", {descending: true});
+      articles.forEach((article)=>{
+        expect(article).toMatchObject({
+          author: expect.any(String),
+          title: expect.any(String),
+          article_id: expect.any(Number),
+          topic: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          article_img_url: expect.any(String),
+          comment_count: expect.any(Number),
+        });
+    });
+  });
+});
+  test("404: Responds with \"Not found\" when given an invalid order query", ()=>{
+    return request(app)
+    .get("/api/articles?order=invalidQuery")
+    .expect(404)
+    .then((response) =>{
+      expect(response.body.msg).toEqual("Not found");
+    })
+  });
+  test("404: Responds with \"Not found\" when sort_by is valid but order is invalid", () => {
+    return request(app)
+      .get("/api/articles?sort_by=title&order=invalidOrder")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not found");
+      });
   });
 });
