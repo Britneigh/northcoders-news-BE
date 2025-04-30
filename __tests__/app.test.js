@@ -541,4 +541,12 @@ describe("GET /api/articles?topic=", () => {
         expect(articles).toEqual([]);
       });
   });
+  test("404: Responds with \"Not found\" when topic query does not exist", () => {
+    return request(app)
+      .get("/api/articles?topic=notATopic")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not found");
+      });
+  });
 });
