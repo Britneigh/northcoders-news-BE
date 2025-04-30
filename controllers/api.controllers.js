@@ -71,11 +71,14 @@ const patchArticle = (req, res, next) => {
     })
 }
 
-const deleteComment = (req, res) => {
+const deleteComment = (req, res, next) => {
     const { comment_id } = req.params;
     return removeComment(comment_id)
     .then((deletedComment) => {
         res.status(204).send({deletedComment: deletedComment});
+    })
+    .catch((err) => {
+        next(err)
     })
 }
 
