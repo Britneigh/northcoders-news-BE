@@ -19,7 +19,14 @@ const selectArticleById = (article_id) => {
     })
 }
 
-const selectArticles = () => {
+const selectArticles = (sort_by = "created_at", order = "desc") => {
+    const validSortBy = ["created_at","author", "title", "article_id", "topic", "votes", "article_img_url"];
+    const validOrders = ["asc", "desc"];
+
+    if (!validSortBy.includes(sort_by) || !validOrders.includes(order)){
+        return Promise.reject({ status: 404, msg: "Not found" });
+    }
+
 return db.query(`SELECT
   articles.author,
   articles.title,
@@ -32,7 +39,7 @@ return db.query(`SELECT
 FROM articles
 LEFT JOIN comments ON comments.article_id = articles.article_id
 GROUP BY articles.article_id
-ORDER BY articles.created_at DESC;`)
+ORDER BY ${sort_by} ${order};`)
     .then ((result) => {
         return result.rows;
     });    

@@ -97,6 +97,7 @@ describe("GET /api/articles", () => {
       .expect(200)
       .then(({ body: { articles } }) => {
         expect(articles).toHaveLength(13);
+        expect(articles).toBeSortedBy("created_at", {descending: true});
         articles.forEach((article)=>{
           expect(article).toMatchObject({
             author: expect.any(String),
@@ -108,7 +109,6 @@ describe("GET /api/articles", () => {
             article_img_url: expect.any(String),
             comment_count: expect.any(Number)
           });
-          expect(articles).toBeSortedBy("created_at", {descending: true});
         });
       });
   });
@@ -347,5 +347,79 @@ describe("GET /api/users", () => {
           });
         });
       });
+  });
+});
+
+describe("GET /api/articles?sort_by", () => {
+  test("200: Responds with an array of articles sorted by title", () => {
+      return request(app)
+      .get("/api/articles?sort_by=title")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toHaveLength(13);
+        expect(articles).toBeSortedBy("title", {descending: true});
+        articles.forEach((article)=>{
+          expect(article).toMatchObject({
+            author: expect.any(String),
+            title: expect.any(String),
+            article_id: expect.any(Number),
+            topic: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(Number),
+          });
+      });
+    });
+  });
+  test("200: Responds with an array of articles sorted by votes", () => {
+    return request(app)
+    .get("/api/articles?sort_by=votes")
+    .expect(200)
+    .then(({ body: { articles } }) => {
+      expect(articles).toHaveLength(13);
+      expect(articles).toBeSortedBy("votes", {descending: true});
+      articles.forEach((article)=>{
+        expect(article).toMatchObject({
+          author: expect.any(String),
+          title: expect.any(String),
+          article_id: expect.any(Number),
+          topic: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          article_img_url: expect.any(String),
+          comment_count: expect.any(Number),
+        });
+    });
+  });
+});
+  test("200: Responds with an array of articles sorted by author", () => {
+    return request(app)
+    .get("/api/articles?sort_by=author")
+    .expect(200)
+    .then(({ body: { articles } }) => {
+      expect(articles).toHaveLength(13);
+      expect(articles).toBeSortedBy("author", {descending: true});
+      articles.forEach((article)=>{
+        expect(article).toMatchObject({
+          author: expect.any(String),
+          title: expect.any(String),
+          article_id: expect.any(Number),
+          topic: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          article_img_url: expect.any(String),
+          comment_count: expect.any(Number),
+        });
+    });
+  });
+});
+  test("404: Responds with \"Not found\" when given an invalid sort_by query", ()=>{
+    return request(app)
+    .get("/api/articles?sort_by=invalidQuery")
+    .expect(404)
+    .then((response) =>{
+      expect(response.body.msg).toEqual("Not found");
+    })
   });
 });
