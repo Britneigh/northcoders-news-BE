@@ -350,7 +350,7 @@ describe("GET /api/users", () => {
   });
 });
 
-describe("GET /api/articles?sort_by", () => {
+describe("GET /api/articles?sort_by=", () => {
   test("200: Responds with an array of articles sorted by title", () => {
       return request(app)
       .get("/api/articles?sort_by=title")
@@ -422,4 +422,49 @@ describe("GET /api/articles?sort_by", () => {
       expect(response.body.msg).toEqual("Not found");
     })
   });
+});
+
+describe.only("GET /api/articles?order=", () => {
+  test("200: Responds with an array of articles in ascending order", () => {
+      return request(app)
+      .get("/api/articles?order=asc")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toHaveLength(13);
+        expect(articles).toBeSortedBy("created_at", {descending: false});
+        articles.forEach((article)=>{
+          expect(article).toMatchObject({
+            author: expect.any(String),
+            title: expect.any(String),
+            article_id: expect.any(Number),
+            topic: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(Number),
+          });
+      });
+    });
+  });
+  test("200: Responds with an array of articles in descending order", () => {
+    return request(app)
+    .get("/api/articles?order=desc")
+    .expect(200)
+    .then(({ body: { articles } }) => {
+      expect(articles).toHaveLength(13);
+      expect(articles).toBeSortedBy("created_at", {descending: true});
+      articles.forEach((article)=>{
+        expect(article).toMatchObject({
+          author: expect.any(String),
+          title: expect.any(String),
+          article_id: expect.any(Number),
+          topic: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          article_img_url: expect.any(String),
+          comment_count: expect.any(Number),
+        });
+    });
+  });
+});
 });
