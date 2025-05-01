@@ -26,7 +26,7 @@ const selectArticleById = (article_id) => {
 }
 
 const selectArticles = (sort_by = "created_at", order = "desc", topic) => {
-    const validSortBy = ["created_at","author", "title", "article_id", "topic", "votes", "article_img_url"];
+    const validSortBy = ["created_at", "author", "title", "article_id", "topic", "votes", "article_img_url"];
     const validOrders = ["asc", "desc"];
     const validTopics = ["mitch", "cats", "paper"];
 
@@ -133,7 +133,6 @@ const removeComment = (comment_id) => {
 const selectUsers = () => {
     return db.query(`SELECT * FROM users;`)
     .then ((result) => {
-        console.log(result.rows);
         return result.rows;
     });   
 }
