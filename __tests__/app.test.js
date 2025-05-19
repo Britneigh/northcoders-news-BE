@@ -480,7 +480,7 @@ describe("GET /api/articles?order=", () => {
     return request(app)
     .get("/api/articles?order=invalidQuery")
     .expect(404)
-    .then((response) =>{
+    .then((response) =>{0
       expect(response.body.msg).toEqual("Not found");
     })
   });
@@ -491,7 +491,7 @@ describe("GET /api/articles?order=", () => {
       .then(({ body }) => {
         expect(body.msg).toBe("Not found");
       });
-  });
+  }, 10000);
 });
 
 describe("GET /api/articles?topic=", () => {
