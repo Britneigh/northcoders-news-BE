@@ -26,7 +26,7 @@ const selectArticleById = (article_id) => {
 }
 
 const selectArticles = (sort_by = "created_at", order = "desc", topic) => {
-    const validSortBy = ["created_at", "author", "title", "article_id", "topic", "votes", "article_img_url"];
+    const validSortBy = ["created_at", "author", "title", "article_id", "topic", "votes", "article_img_url", "comment_count"];
     const validOrders = ["asc", "desc"];
     const validTopics = ["mitch", "cats", "paper", "coding", "football", "cooking"];
 
