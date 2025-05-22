@@ -175,7 +175,7 @@ describe("POST /api/articles/:article_id/comments", () => {
       })
     })
   });
-  test("400: Responds with \"Bad request\" when the request body does not contain the all of the neccessary fields", () =>{
+  test("400: Responds with \"Bad request\" when the request body does not contain all of the neccessary fields", () =>{
     const newComment = {
       body: "Apple pie with custard"
     }
